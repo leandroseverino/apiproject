@@ -1,5 +1,10 @@
 const express = require('express');
 const logger = require('morgan');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
+// mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://leandro:leandro01@ds113703.mlab.com:13703/apiproject', { useNewUrlParser: true })
 
 const app = express();
 
@@ -7,6 +12,7 @@ const users = require('./routes/users');
 
 // Middlewares
 app.use(logger('dev'));
+app.use(bodyParser.json());
 
 // Routes
 app.use('/users', users);
