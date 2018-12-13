@@ -3,15 +3,13 @@ const logger = require('morgan');
 
 const app = express();
 
+const users = require('./routes/users');
+
 // Middlewares
 app.use(logger('dev'));
 
 // Routes
-app.get('/', (req, res, next) => {
-    res.status(200).json({
-        message: 'You requested index page'
-    });
-});
+app.use('/users', users);
 
 // Catch 404 erros and foward them to error handler 
 app.use((req, res, next) => {
@@ -38,5 +36,5 @@ app.use((err, req, res, next) => {
 
 // Start the server
 const port = app.get('port') || 3000;
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+app.listen(port, () => console.log(`Server is running on port ${port} !`));
 
