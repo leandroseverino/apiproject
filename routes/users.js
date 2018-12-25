@@ -2,21 +2,27 @@ const express = require('express');
 // const router = express.Router();
 
 const router = require('express-promise-router')();
-const { validateParam, schemas } = require('../helpers/routerHelpers');
+const { validateParam, validateBody, schemas } = require('../helpers/routerHelpers');
 
 const UsersController = require('../controllers/users');
 
 router.route('/')
     .get(UsersController.index)
-    .post(UsersController.newUser);
+    .post(validateBody(schemas.userSchema), UsersController.newUser);
 
 router.route('/:id')
     .get(validateParam(schemas.idSchema, 'id'), UsersController.get)
-    .put(UsersController.put)
-    .patch(UsersController.patch);
+    .put([validateParam(schemas.idSchema, 'id'),
+          validateBody(schemas.userSchema)],
+          UsersController.put)
+    .patch([validateParam(schemas.idSchema, 'id'),
+            validateBody(schemas.userOptionalSchema)],
+            UsersController.patch);
 
 router.route('/:id/cars')
-    .get(UsersController.getUserCars)
-    .post(UsersController.addNewCar);
+    .get(validateParam(schemas.idSchema, 'id'), UsersController.getUserCars)
+    .post([validateParam(schemas.idSchema, 'id'),
+           validateBody(schemas.carSchema)], 
+           UsersController.addNewCar);
 
 module.exports=router;
