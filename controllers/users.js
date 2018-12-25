@@ -27,14 +27,11 @@ module.exports = {
         res.status(200).json(users);
     },
     get: async (req, res, next) => {
-        const { id } = req.params;
-        User.findById(id)
-            .then(user => {
-                res.status(200).json(user);
-            })
-            .catch(err => {
-                next(err);
-            });
+        const { id } = req.value.params;
+        //const { id } = req.params;
+        //User.findById(result.value.id)
+        const user = await User.findById(id);
+        res.status(200).json(user);
     },
     put: async (req, res, neDataxt) => {
         // replace the User content
