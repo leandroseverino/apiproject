@@ -1,6 +1,3 @@
-const express = require('express');
-// const router = express.Router();
-
 const router = require('express-promise-router')();
 const { validateParam, validateBody, schemas } = require('../helpers/routerHelpers');
 
@@ -22,7 +19,7 @@ router.route('/:id')
 router.route('/:id/cars')
     .get(validateParam(schemas.idSchema, 'id'), UsersController.getUserCars)
     .post([validateParam(schemas.idSchema, 'id'),
-           validateBody(schemas.carSchema)], 
+           validateBody(schemas.userCarSchema)], 
            UsersController.addNewCar);
 
 module.exports=router;

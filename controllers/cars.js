@@ -3,21 +3,37 @@ const Car = require('../models/car');
 
 module.exports = {
     index: async (req, res, next) => {
-        const users = await User.find({});
-        res.status(200).json(users);
+        const cars = await Car.find({});
+        res.status(200).json(cars);
     },
     get: async (req, res, next) => {
         const { id } = req.value.params;
-        const user = await User.findById(id);
-        res.status(200).json(user);
+        const car = await Car.findById(id);
+        res.status(200).json(car);
+    },
+    post: async (req, res, next) => {
+        const seller = await User.findById(req.value.body.seller);
+        
+        const newCar = req.value.body;
+        delete newCar.seller;
+
+        const car = new Car(newCar);
+        car.seller = seller;
+
+        await car.save();
+
+        seller.cars.push(car);
+        await seller.save();
+
+        res.status(201).json(car);
     },
     put: async (req, res, next) => {
-        // replace the User content
+        // replace the Car content
         // Enforce that req.body must contain all the fields
         const { id } = req.value.params;
-        const newUserData = req.value.body;
+        const newCarData = req.value.body;
 
-        const updatedUser = await User.findByIdAndUpdate(id, newUserData);
+        const updatedCar = await Car.findByIdAndUpdate(id, newCarData);
         res.status(200).json( { success: true } );
 
     },
@@ -25,20 +41,27 @@ module.exports = {
         // Update the User content
         // req.body may contain any number of fields
         const { id } = req.value.params;
-        const newUserData = req.value.body;
+        const newCarData = req.value.body;
 
-        const updatedUser = await User.findByIdAndUpdate(id, newUserData);
+        const updatedCar = await Car.findByIdAndUpdate(id, newCarData);
         res.status(200).json( { success: true } );
     },
     delete: async (req, res, next) => {
         const { id } = req.value.params;
-        User.findById(id)
-            .then(user => {
-                res.status(200).json(user);
-            })
-            .catch(err => {
-                next(err);
-            });
+        const car = await Car.findById(id);
+
+        if (!car) {
+            return res.status(404).json({ error: 'Car does not exist !'});
+        }
+        
+        sellerId = car.seller;
+        const seller = await User.findById(sellerId);
+        await car.remove();
+
+        seller.cars.pull(car);
+        await seller.save();
+
+        res.status(200).json( { success: true } );
     },
     /*
     * Return the Cars collection associeted with a specific User (ID).
@@ -66,11 +89,5 @@ module.exports = {
         user.cars.push(newCar);
         const updatedCar = await user.save();
         res.status(201).json(car);
-    },
-     newUser: async (req, res, next) => {
-        const newUser = new User(req.value.body);
-        const user = await newUser.save();
-        console.log('new user added to collection !', user);
-        res.status(201).json(user);
     }  
 };

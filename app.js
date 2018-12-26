@@ -9,6 +9,7 @@ mongoose.connect('mongodb://leandro:leandro01@ds113703.mlab.com:13703/apiproject
 const app = express();
 
 const users = require('./routes/users');
+const cars = require('./routes/cars');
 
 // Middlewares
 app.use(logger('dev'));
@@ -16,6 +17,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/users', users);
+app.use('/cars', cars);
 
 // Catch 404 erros and foward them to error handler 
 app.use((req, res, next) => {
