@@ -2,11 +2,13 @@ const express = require('express');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 
 // mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://leandro:leandro01@ds113703.mlab.com:13703/apiproject', { useNewUrlParser: true })
 
 const app = express();
+app.use(helmet());
 
 const users = require('./routes/users');
 const cars = require('./routes/cars');
